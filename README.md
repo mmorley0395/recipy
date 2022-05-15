@@ -1,0 +1,2 @@
+# recipy
+automating meal planning
