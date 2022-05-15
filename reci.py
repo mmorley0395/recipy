@@ -6,11 +6,7 @@ from bs4 import BeautifulSoup
 class Recipe:
     def __init__(self, url):
         self.url = url
-        self.ing_tags = None
-        self.name = None
-        self.ingredients = None
-        self.time = None  # not in li/ul tags, need to find separately
-        self.directions = None
+        # self.ing_tags = None
 
     def process_url(self):
         """uses Beautiful Soup to grab the ingredients list from the URL"""
@@ -21,35 +17,32 @@ class Recipe:
         soup = BeautifulSoup(ingredients_container, "html.parser")
         self.ing_tags = soup.find_all("li")
 
+    def loop_template(self, list_name, type_name, tag_class: str):
+        list_name = []
+        for tag in self.ing_tags:
+            type_name = tag.find_all("span", class_=f"{tag_class}")
+            type_name = type_name[0].get_text()
+            list_name.append(type_name)
+        self.list_name = list_name
+        return self.list_name
+
     def produce_names(self):
         """produces a list of ingredient names"""
-        ing_list = []
-        for tag in self.ing_tags:
-            ing_name = tag.find_all("span", class_="wprm-recipe-ingredient-name")
-            ing_name = ing_name[0].get_text()
-            ing_list.append(ing_name)
-        self.ing_list = ing_list
-        print(self.ing_list)
+        self.ingredient_list = self.loop_template(
+            "ingredient_list", "ing_name", "wprm-recipe-ingredient-name"
+        )
 
     def produce_amounts(self):
-        """produces quantities list for ingredients"""
-        amounts_list = []
-        for tag in self.ing_tags:
-            ing_amount = tag.find_all("span", class_="wprm-recipe-ingredient-amount")
-            ing_amount = ing_amount[0].get_text()
-            amounts_list.append(ing_amount)
-        self.amounts_list = amounts_list
-        print(self.amounts_list)
+        """produces a list of ingredient amounts"""
+        self.amounts_list = self.loop_template(
+            "amounts_list", "ing_amount", "wprm-recipe-ingredient-amount"
+        )
 
     def produce_units(self):
-        """produces a list of units"""
-        units_list = []
-        for tag in self.ing_tags:
-            unit_name = tag.find_all("span", class_="wprm-recipe-ingredient-unit")
-            unit_name = unit_name[0].get_text()
-            units_list.append(unit_name)
-        self.units_list = units_list
-        print(self.units_list)
+        """produces a list of ingredient units"""
+        self.units_list = self.loop_template(
+            "units_list", "unit_name", "wprm-recipe-ingredient-unit"
+        )
 
 
 R1 = Recipe("https://minimalistbaker.com/wprm_print/90501")
