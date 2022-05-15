@@ -13,6 +13,7 @@ class Recipe:
         self.directions = None
 
     def process_url(self):
+        """uses Beautiful Soup to grab the ingredients list from the URL"""
         page = requests.get(self.url)
         soup = BeautifulSoup(page.text, "html.parser")
         ingredients_container = soup.find_all("ul", class_="wprm-recipe-ingredients")
@@ -21,6 +22,7 @@ class Recipe:
         self.ing_tags = soup.find_all("li")
 
     def produce_names(self):
+        """produces a list of ingredient names"""
         ing_list = []
         for tag in self.ing_tags:
             ing_name = tag.find_all("span", class_="wprm-recipe-ingredient-name")
@@ -30,6 +32,7 @@ class Recipe:
         print(self.ing_list)
 
     def produce_amounts(self):
+        """produces quantities list for ingredients"""
         amounts_list = []
         for tag in self.ing_tags:
             ing_amount = tag.find_all("span", class_="wprm-recipe-ingredient-amount")
@@ -39,6 +42,7 @@ class Recipe:
         print(self.amounts_list)
 
     def produce_units(self):
+        """produces a list of units"""
         units_list = []
         for tag in self.ing_tags:
             unit_name = tag.find_all("span", class_="wprm-recipe-ingredient-unit")
